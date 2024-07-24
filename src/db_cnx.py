@@ -12,21 +12,21 @@ class db_connection():
         except Exception as e:
             print("Couldn't connect to mongodb. Please make sure mongodb is running, then restart the application. " + e)
         try:
-            self.db = self.client.get_database("npp")
+            self.db = self.client.get_database("nnp")
         except Exception as e:
-            print("Couldn't connect to npp database. Please create the database, then restart the application. " + e)
+            print("Couldn't connect to npp database. Please restart the application. " + e)
         self.users = self.db.users
         self.inventory = self.db.inventory
         self.orders = self.db.orders
 
-    def db_search(self, searchable, collection):
+    def db_search_one(self, searchable, collection):
         match collection.lower():
             case "users":
-                return self.users.find(searchable)
+                return self.users.find_one(searchable)
             case "inventory":
-                return self.inventory.find(searchable)
+                return self.inventory.find_one(searchable)
             case "orders":
-                return self.orders.find(searchable)
+                return self.orders.find_one(searchable)
 
     def db_insert(self, insertable, collection):
         match collection.lower():

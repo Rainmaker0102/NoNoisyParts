@@ -3,24 +3,28 @@
 
 # Python Imports
 from getpass import getpass
+from hashlib import sha256
 
 # Project Imports
+from db_cnx import db_connection
 
 class Login():
     def __init__(self, active=True):
         self.active = active
+        self.connection = db_connection()
 
     def run(self):
         while self.active:
-            print("Welcome to OceanOps! Please sign in. [Q]uit")
+            print("Please sign in. [Q]uit")
             username = input("Username: ")
             if username.upper() == "Q":
-                print("Thanks for using OceanOps. Have a nice day!")
+                print("Bye")
                 break
-            password = getpass("Password: ")
-            if username not in users.keys():
+            password = sha256(getpass("Password: ").encode())
+            user_search_result = self.connection.db_search_one({"username": username}, "users")
+            if user_search_result["username"] != username:
                 print("User was not found. Please try again.")
-            elif users[username] != password:
+            elif user_search_result["password_hash"] != password.hexdigest():
                 print("Password incorrect. Please try again.")
             else:
                 print(f"Welcome, {username}")
