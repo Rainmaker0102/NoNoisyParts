@@ -2,7 +2,6 @@
 # This is the module that handles db connections. Refactor this for your specific db
 
 from pymongo import MongoClient
-import json
 
 class db_connection():
     def __init__(self):
