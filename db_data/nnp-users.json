@@ -1,0 +1,16 @@
+{
+	"_id": {
+		"$oid": "66997ba3ab01322918a5bb8d"
+	},
+	"username": "brian",
+	"password_hash": "-1881653097917527067",
+	"role": "admin"
+}
+{
+	"_id": {
+		"$oid": "66997ba3ab01322918a5bb8e"
+	},
+	"username": "seand",
+	"password_hash": "-9118158027290426719",
+	"role": "user"
+}

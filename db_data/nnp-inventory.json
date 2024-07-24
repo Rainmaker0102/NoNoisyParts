@@ -1,0 +1,24 @@
+{
+	"_id": {
+		"$oid": "66997e0eab01322918a5bb8f"
+	},
+	"name": "Sport Style Brake Pads",
+	"price": 99.99,
+	"quantity": 10
+}
+{
+	"_id": {
+		"$oid": "66997e0eab01322918a5bb90"
+	},
+	"name": "Sport Style Brake Calipers",
+	"price": 399.99,
+	"quantity": 10
+}
+{
+	"_id": {
+		"$oid": "66997e0eab01322918a5bb91"
+	},
+	"name": "Sport Style Brake Rotors",
+	"price": 199.99,
+	"quantity": 10
+}
