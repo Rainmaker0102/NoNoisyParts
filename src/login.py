@@ -7,6 +7,8 @@ from hashlib import sha256
 
 # Project Imports
 from db_cnx import db_connection
+import global_info as gi
+import order_dash as od
 
 class Login():
     def __init__(self, active=True):
@@ -27,9 +29,13 @@ class Login():
             elif user_search_result["password_hash"] != password.hexdigest():
                 print("Password incorrect. Please try again.")
             else:
+                gi.current_user = user_search_result
                 print(f"Welcome, {username}")
                 print("#########################################")
                 print()
+                order_dash = od.dashboardDisplay()
+                order_dash.run()
+
 
 if __name__ == "__main__":
     myLogin = Login()
