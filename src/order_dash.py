@@ -9,7 +9,7 @@ from db_cnx import db_connection
 import global_info as gi
 
 class dashboardDisplay():
-    def __init__(self, active=True):
+    def __init__(self):
         self.cnx = db_connection()
     
     def view_orders(self):
@@ -205,14 +205,14 @@ class dashboardDisplay():
     def admin_delete_order(self):
         user_list = self.cnx.db_search_many({}, "users")
         while True:
-            print("Please select a user whose orders you'd like to delete")
+            print("Here's a list of users in the databse")
             for index, user in enumerate(user_list):
                 for key, value in user.items():
                     if key == "_id":
                         pass
                     else:
                         print(f"{index}. {key}: {value}")
-            user_selection = input("Please select the user whose order you'd like to modify or [Q]uit the menu: ")
+            user_selection = input("Please select the user whose order you'd like to delete or [Q]uit the menu: ")
             if user_selection.upper() == "Q":
                 print("Exiting the menu")
                 break

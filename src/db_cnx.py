@@ -55,7 +55,7 @@ class db_connection():
             case "orders":
                 return self.orders.update_one(searchable, settable)
 
-    def db_delete(self, deleateble, collection):
+    def db_delete_one(self, deleateble, collection):
         match collection.lower():
             case "users":
                 return self.users.delete_one(deleateble)
@@ -63,6 +63,15 @@ class db_connection():
                 return self.inventory.delete_one(deleateble)
             case "orders":
                 return self.orders.delete_one(deleateble)
+    
+    def db_delete_many(self, deleateble, collection):
+        match collection.lower():
+            case "users":
+                self.users.delete_many(deleateble)
+            case "inventory":
+                self.inventory.delete_many(deleateble)
+            case "orders":
+                self.orders.delete_many(deleateble)
 
 if __name__ == "__main__":
     my_db_cnx = db_connection()
@@ -72,5 +81,6 @@ if __name__ == "__main__":
     # my_db_cnx.db_update({"_id": selected_order["_id"]}, {"$pull": {"items": {"item_id": selected_item["_id"]}}}, "orders")
     # my_db_cnx.db_update({"_id": selected_order["_id"]}, {"$push": {"items": {"item_id": selected_item["_id"], "quantity": 69}}}, "orders")
     # my_db_cnx.db_update({"_id": selected_order["_id"], "items.item_id": selected_item["_id"]}, {"$set": {"items.$.quantity": selected_quantity}}, "orders")
-    my_db_cnx.db_delete({"_id": selected_order["_id"]}, "orders")
+    # my_db_cnx.db_delete({"_id": selected_order["_id"]}, "orders")
+    print(my_db_cnx.users.find_one(sort=[("_id", -1)]))
     print("The operation has executed! Check MongoDB")
