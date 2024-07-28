@@ -66,6 +66,11 @@ class db_connection():
 
 if __name__ == "__main__":
     my_db_cnx = db_connection()
+    selected_order = my_db_cnx.db_search_one({"_id": ObjectId("66a5905a483e23d5ad715c30")}, "orders")
     selected_item = my_db_cnx.db_search_one({"_id": ObjectId("66997e0eab01322918a5bb8f")}, "inventory")
-    my_db_cnx.db_update({"_id": selected_item["_id"]}, {"$inc": {"quantity": (4)}}, "inventory")
+    selected_quantity = 20
+    # my_db_cnx.db_update({"_id": selected_order["_id"]}, {"$pull": {"items": {"item_id": selected_item["_id"]}}}, "orders")
+    # my_db_cnx.db_update({"_id": selected_order["_id"]}, {"$push": {"items": {"item_id": selected_item["_id"], "quantity": 69}}}, "orders")
+    # my_db_cnx.db_update({"_id": selected_order["_id"], "items.item_id": selected_item["_id"]}, {"$set": {"items.$.quantity": selected_quantity}}, "orders")
+    my_db_cnx.db_delete({"_id": selected_order["_id"]}, "orders")
     print("The operation has executed! Check MongoDB")

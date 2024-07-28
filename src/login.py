@@ -23,7 +23,7 @@ class Login():
                 print("Bye")
                 break
             password = sha256(getpass("Password: ").encode())
-            user_search_result = self.connection.db_search_one({"username": username}, "users")
+            user_search_result = self.connection.db_search_one({"username": username}, "users") or {"username": "None", "password_hash": "None"}
             if user_search_result["username"] != username:
                 print("User was not found. Please try again.")
             elif user_search_result["password_hash"] != password.hexdigest():
