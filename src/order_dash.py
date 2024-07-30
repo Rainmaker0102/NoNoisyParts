@@ -173,7 +173,7 @@ class dashboardDisplay():
                 input("Press enter to continue")
                 continue
             user_item = user_order["items"][user_selection]
-            quantity_selection = input("And what is the new quantity of said item? Enter 0 to delete the item from the order, or [R]estart the menu: ")
+            quantity_selection = input("And what is the new quantity of said item? or [R]estart the menu: ")
             if quantity_selection.upper() == "R":
                 print("Restarting the menu")
                 continue

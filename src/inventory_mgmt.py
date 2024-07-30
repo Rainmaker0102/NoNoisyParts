@@ -2,11 +2,6 @@
 # This is where a user can update their username or password and delete their account.
 # Admins can update any user's username, password, role, or delete them.
 
-# Python Module Imports
-from bson import ObjectId
-from hashlib import sha256
-from getpass import getpass
-
 # Project imports
 from db_cnx import db_connection
 import global_info as gi

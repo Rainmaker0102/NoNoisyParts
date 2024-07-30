@@ -17,7 +17,26 @@ class dashboardDisplay():
             print(f"No Noisy Parts! Not Here!")
             print(f"Hello {gi.current_user["username"]}! You have {gi.current_user["role"]} privileges")
             print("What would you like to do today?")
-            selection = input("[Q]uit\n[O]rder dashboard\n[A]ccount dashboard\n[I]nventory management\n: ")
+            if gi.current_user["role"] == "admin":
+                selection = input("[Q]uit\n[O]rder dashboard\n[A]ccount dashboard\n[I]nventory management\n: ")
+                match selection.upper():
+                    case "Q":
+                        print("Exiting the Dashboard")
+                        break
+                    case "O":
+                        my_order_dash = order_dash.dashboardDisplay()
+                        my_order_dash.run()
+                    case "A":
+                        my_account_dash = account_dash.dashboardDisplay()
+                        my_account_dash.run()
+                    case "I":
+                        my_inventory_dash = inventory_mgmt.dashboardDisplay()
+                        my_inventory_dash.run()
+                    case _:
+                        print("That input was not accepted: Input not in input list. Please try again")
+                print()
+                continue
+            selection = input("[Q]uit\n[O]rder dashboard\n[A]ccount dashboard\n: ")
             match selection.upper():
                 case "Q":
                     print("Exiting the Dashboard")
@@ -28,9 +47,6 @@ class dashboardDisplay():
                 case "A":
                     my_account_dash = account_dash.dashboardDisplay()
                     my_account_dash.run()
-                case "I":
-                    my_inventory_dash = inventory_mgmt.dashboardDisplay()
-                    my_inventory_dash.run()
                 case _:
                     print("That input was not accepted: Input not in input list. Please try again")
             print()
