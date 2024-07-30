@@ -191,6 +191,26 @@ class dashboardDisplay():
             print(f"No Noisy Parts! Not Here!")
             print(f"Hello {gi.current_user["username"]}! You have {gi.current_user["role"]} privileges")
             print("What would you like to do today?")
+            if gi.current_user["role"] == "admin":
+                ad_menu_confirm = input("You have admin privileges! Would you like to access the admin order menu? y/N: ")
+                if ad_menu_confirm.upper() == "Y":
+                    selection = input("[Q]uit\nUpdate user's [U]sername\nUpdate user's [P]assword\nUpdate user's [R]ole\n[D]elete a user\n: ")
+                    match selection.upper():
+                        case "Q":
+                            print("Exiting the Dashboard")
+                            break
+                        case "U":
+                            self.admin_update_user_username()
+                        case "P":
+                            self.admin_update_user_password()
+                        case "R":
+                            self.admin_update_user_role()
+                        case "D":
+                            self.admin_delete_user()
+                        case _:
+                            print("That input was not accepted: Input not in input list. Please try again")
+                    print()
+                    continue
             selection = input("[Q]uit\nUpdate user[N]ame\nUpdate [P]assword\n: ")
             match selection.upper():
                 case "Q":
