@@ -13,7 +13,7 @@ import account_creator as ac
 
 class Login():
     def __init__(self):
-        self.connection = db_connection()
+        self.connection = db_connection("login")
 
     def run(self):
         while True:

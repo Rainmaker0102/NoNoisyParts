@@ -8,7 +8,7 @@ import global_info as gi
 
 class dashboardDisplay():
     def __init__(self):
-        self.cnx = db_connection()
+        self.cnx = db_connection("inventory_mgmt")
         self.new_item = {
             "name": "None",
             "price": None,
@@ -31,9 +31,9 @@ class dashboardDisplay():
             if self.new_item["price"].upper() == "R":
                 continue
             try:
-                self.new_item["price"] = int(self.new_item["price"])
+                self.new_item["price"] = float(self.new_item["price"])
             except ValueError:
-                print("Please give valid input of an integer or R.")
+                print("Please give valid input of a float or R.")
                 input("Press enter to continue")
                 continue
             print(f"The price for {self.new_item["name"]} is ${self.new_item["price"]} each.")
@@ -46,7 +46,7 @@ class dashboardDisplay():
                 print("Please give valid input of an integer or R.")
                 input("Press enter to continue")
                 continue
-            print(f"So the new item is {self.new_item["quantity"]} of the {self.new_item["name"]} at ${self.new_item["price"]} each.")
+            print(f"Adding {self.new_item["quantity"]} of the {self.new_item["name"]} at ${self.new_item["price"]} each.")
             confirm = input("Would you like to commit this change? Y/n: ")
             if confirm.upper() not in ("", "Y"):
                 self.new_item = self.blank_item
@@ -60,8 +60,8 @@ class dashboardDisplay():
 
     def change_quantity(self):
         print("Let's change the quantity of an item!")
-        current_inventory = self.cnx.db_search_many({}, "inventory")
         while True:
+            current_inventory = self.cnx.db_search_many({}, "inventory")
             print("Here's a list of available items")
             current_inventory = self.cnx.db_search_many({}, "inventory")
             for index, item in enumerate(current_inventory):
@@ -72,7 +72,7 @@ class dashboardDisplay():
                         print(f"{index}. {key}: {value}")
             print()
             item_selection = input("Please select an item from the list or [Q]uit: ")
-            if item_selection == "Q":
+            if item_selection.upper() == "Q":
                 break
             try:
                 item_selection = int(item_selection)
@@ -87,11 +87,11 @@ class dashboardDisplay():
             selected_item = current_inventory[item_selection]
             print(f"The current quantity of {selected_item["name"]} is {selected_item["quantity"]}")
             new_quantity = input("What's the new quantity? Or [R]estart: ")
-            if new_quantity == "R":
+            if new_quantity.upper() == "R":
                 print("Restarting")
                 continue
             try:
-                selected_quantity = int(selected_quantity)
+                new_quantity = int(new_quantity)
             except ValueError:
                 print("Please give valid input of an integer or R.")
                 input("Press enter to continue")
@@ -104,7 +104,51 @@ class dashboardDisplay():
             self.cnx.db_update({"_id": selected_item["_id"]}, {"$set": {"quantity": new_quantity}},"inventory")
             print("Your item's quantity has been updated!")
 
-
+    def change_price(self):
+        print("Let's change the price of an item!")
+        while True:
+            current_inventory = self.cnx.db_search_many({}, "inventory")
+            print("Here's a list of available items")
+            current_inventory = self.cnx.db_search_many({}, "inventory")
+            for index, item in enumerate(current_inventory):
+                for key, value in item.items():
+                    if key == "_id":
+                        pass
+                    else:
+                        print(f"{index}. {key}: {value}")
+            print()
+            item_selection = input("Please select an item from the list or [Q]uit: ")
+            if item_selection.upper() == "Q":
+                break
+            try:
+                item_selection = int(item_selection)
+            except ValueError:
+                print("Please give valid input of an integer or Q.")
+                input("Press enter to continue")
+                continue
+            if item_selection not in range(len(current_inventory)):
+                print("Your selection was not valid for the inventory. Please review the indexes and make your selection again")
+                input("Press enter to continue")
+                continue
+            selected_item = current_inventory[item_selection]
+            print(f"The current price of {selected_item["name"]} is {selected_item["price"]}")
+            new_price = input("What's the new price? Or [R]estart: ")
+            if new_price.upper() == "R":
+                print("Restarting")
+                continue
+            try:
+                new_price = float(new_price)
+            except ValueError:
+                print("Please give valid input of an float or R.")
+                input("Press enter to continue")
+                continue
+            print(f"Old price: {selected_item["price"]} and New quantity: {new_price}")
+            confirm = input("Would you like to commit this change? Y/n: ")
+            if confirm.upper() not in ("", "Y"):
+                print("Your item's price has not been changed. Restarting.")
+                continue
+            self.cnx.db_update({"_id": selected_item["_id"]}, {"$set": {"price": new_price}},"inventory")
+            print("Your item's price has been updated!")
 
     def remove_item(self):
         print("Let's remove that item!")
@@ -120,7 +164,7 @@ class dashboardDisplay():
                         print(f"{index}. {key}: {value}")
             print()
             item_selection = input("Please select an item from the list or [Q]uit: ")
-            if item_selection == "Q":
+            if item_selection.upper() == "Q":
                 break
             try:
                 item_selection = int(item_selection)
@@ -144,18 +188,22 @@ class dashboardDisplay():
 
     def run(self):
         while True:
-            print(f"No Noisy Parts! Not Here!")
+            print(f"Welcome to the Inventory Management Dashboard")
             print(f"Hello {gi.current_user["username"]}! You have {gi.current_user["role"]} privileges")
             print("What would you like to do today?")
-            selection = input("[Q]uit\nUpdate user[N]ame\nUpdate [P]assword\n: ")
+            selection = input("[E]xit\n[A]dd item\nChange item [Q]uantity\nChange item [P]rice\n[D]elete an item\n: ")
             match selection.upper():
-                case "Q":
+                case "E":
                     print("Exiting the Dashboard")
                     break
-                case "N":
-                    self.update_username()
+                case "A":
+                    self.add_item()
+                case "Q":
+                    self.change_quantity()
                 case "P":
-                    self.update_password()
+                    self.change_price()
+                case "D":
+                    self.remove_item()
                 case _:
                     print("That input was not accepted: Input not in input list. Please try again")
             print()

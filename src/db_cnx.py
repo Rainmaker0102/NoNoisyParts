@@ -6,9 +6,9 @@ import logging
 from time import asctime
 
 class db_connection():
-    def __init__(self):
+    def __init__(self, parent_module_name="db_cnx"):
+        logging.basicConfig(filename=f"nnp-{parent_module_name}-db_log_{asctime()}.log", format=f"{parent_module_name}::%(levelname)s:%(message)s", level=logging.DEBUG)
         self.logger = logging.getLogger(__name__)
-        logging.basicConfig(filename=f"nnp-{__name__}-db_log_{asctime()}.log", format="%(name)s::%(levelname)s:%(message)s")
         # Possibly need to refactor to keep the client & database variables private
         try:
             self.logger.info("Connecting to mongodb")
@@ -36,6 +36,9 @@ class db_connection():
                 return self.inventory.find_one(searchable)
             case "orders":
                 return self.orders.find_one(searchable)
+            case _:
+                print("Invalid collection!")
+                self.logger.warning(f"A search one operation was tried on a nonexistent collection {collection}")
     
     def db_search_many(self,searchable, collection):
         self.logger.info(f"Searching for many documents in collection {collection} with parameter {searchable}")
@@ -46,6 +49,9 @@ class db_connection():
                 return list(self.inventory.find(searchable))
             case "orders":
                 return list(self.orders.find(searchable))
+            case _:
+                print("Invalid collection!")
+                self.logger.warning(f"A search many operation was tried on a nonexistent collection {collection}")
 
     def db_insert(self, insertable, collection):
         self.logger.info(f"Inserting one document {insertable} into collection {collection}")
@@ -56,6 +62,9 @@ class db_connection():
                 return self.inventory.insert_one(insertable)
             case "orders":
                 return self.orders.insert_one(insertable)
+            case _:
+                print("Invalid collection!")
+                self.logger.warning(f"An insert operation was tried on a nonexistent collection {collection}")
     
     def db_update(self, searchable, settable, collection):
         self.logger.info(f"Updating one document {searchable} with the parameter {settable} in the collection {collection}")
@@ -66,6 +75,9 @@ class db_connection():
                 return self.inventory.update_one(searchable, settable)
             case "orders":
                 return self.orders.update_one(searchable, settable)
+            case _:
+                print("Invalid collection!")
+                self.logger.warning(f"An update operation was tried on a nonexistent collection {collection}")
 
     def db_delete_one(self, deleateble, collection):
         self.logger.info("Deleting one document {deletable} from collection {collection}")
@@ -76,6 +88,9 @@ class db_connection():
                 return self.inventory.delete_one(deleateble)
             case "orders":
                 return self.orders.delete_one(deleateble)
+            case _:
+                print("Invalid collection!")
+                self.logger.warning(f"A delete one operation was tried on a nonexistent collection {collection}")
     
     def db_delete_many(self, deleateble, collection):
         self.logger.info("Deleting many documents following parameter {deletable} in collection {collection}")
@@ -86,6 +101,9 @@ class db_connection():
                 self.inventory.delete_many(deleateble)
             case "orders":
                 self.orders.delete_many(deleateble)
+            case _:
+                print("Invalid collection!")
+                self.logger.warning(f"A delete many operation was tried on a nonexistent collection {collection}")
 
 if __name__ == "__main__":
     pass

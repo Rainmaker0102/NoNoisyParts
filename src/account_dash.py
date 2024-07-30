@@ -3,7 +3,6 @@
 # Admins can update any user's username, password, role, or delete them.
 
 # Python Module Imports
-from bson import ObjectId
 from hashlib import sha256
 from getpass import getpass
 
@@ -13,35 +12,37 @@ import global_info as gi
 
 class dashboardDisplay():
     def __init__(self):
-        self.cnx = db_connection()
+        self.cnx = db_connection("account_dash")
 
     def update_username(self):
         print("Let's fix that username!")
         new_username = input("Please enter the new username you would like to use: ")
         confirm = input(f"The username you entered is {new_username}, would you like to commit this change? y/N: ")
         if confirm.upper() == "Y":
-            self.cnx.db_update({"_id": gi.current_user["_id"]}, {"$set": {"username": new_username}})
+            self.cnx.db_update({"_id": gi.current_user["_id"]}, {"$set": {"username": new_username}}, "users")
+            gi.current_user = self.cnx.db_search_one({"_id": gi.current_user["_id"]}, "users")
             print("Your change has been committed!")
         else:
             print("Your username has not been modified.")
 
     def update_password(self):
         print("Let's fix that password!")
-        new_password1 = getpass(input("Please enter the username you would like to use: "))
-        new_password2 = getpass(input("Confirm your new password"))
+        new_password1 = getpass("Please enter the pasword you would like to use: ")
+        new_password2 = getpass("Confirm your new password: ")
         if new_password1 != new_password2:
             print("Your passwords did not match, try again")
             return
         confirm = input(f"Your password has been verified, would you like to commit this change? y/N: ")
         if confirm.upper() == "Y":
-            self.cnx.db_update({"_id": gi.current_user["_id"]}, {"$set": {"password_hash": sha256(new_password1.encode()).hexdigest()}})
+            self.cnx.db_update({"_id": gi.current_user["_id"]}, {"$set": {"password_hash": f"{sha256(new_password1.encode()).hexdigest()}"}}, "users")
+            gi.current_user = self.cnx.db_search_one({"_id": gi.current_user["_id"]}, "users")
             print("Your change has been committed!")
         else:
             print("Your password has not been modified.")
 
     def admin_update_user_username(self):
-        user_list = self.cnx.db_search_many({}, "users")
         while True:
+            user_list = self.cnx.db_search_many({}, "users")
             print("Here's a list of users in the databse")
             for index, user in enumerate(user_list):
                 for key, value in user.items():
@@ -70,15 +71,15 @@ class dashboardDisplay():
             new_username = input("Please enter the new username you would like to use: ")
             confirm = input(f"The username you entered is {new_username}, would you like to commit this change? y/N: ")
             if confirm.upper() == "Y":
-                self.cnx.db_update({"_id": selected_user["_id"]}, {"$set": {"username": new_username}})
+                self.cnx.db_update({"_id": selected_user["_id"]}, {"$set": {"username": new_username}}, "users")
                 print("The change has been committed!")
             else:
                 print("The username has not been modified.")
 
 
     def admin_update_user_password(self):
-        user_list = self.cnx.db_search_many({}, "users")
         while True:
+            user_list = self.cnx.db_search_many({}, "users")
             print("Here's a list of users in the databse")
             for index, user in enumerate(user_list):
                 for key, value in user.items():
@@ -105,21 +106,21 @@ class dashboardDisplay():
             if confirm.upper() == "N":
                 continue
             print("Let's fix that password!")
-            new_password1 = getpass(input("Please enter the username you would like to use: "))
-            new_password2 = getpass(input("Confirm your new password"))
+            new_password1 = getpass("Please enter the password you would like to use: ")
+            new_password2 = getpass("Confirm your new password")
             if new_password1 != new_password2:
                 print("Your passwords did not match, try again")
                 continue
             confirm = input(f"Your password has been verified, would you like to commit this change? y/N: ")
             if confirm.upper() == "Y":
-                self.cnx.db_update({"_id": selected_user["_id"]}, {"$set": {"password_hash": sha256(new_password1.encode()).hexdigest()}})
+                self.cnx.db_update({"_id": selected_user["_id"]}, {"$set": {"password_hash": sha256(new_password1.encode()).hexdigest()}}, "users")
                 print("Your change has been committed!")
             else:
                 print("Your password has not been modified.")
 
     def admin_update_user_role(self):
-        user_list = self.cnx.db_search_many({}, "users")
         while True:
+            user_list = self.cnx.db_search_many({}, "users")
             print("Here's a list of users in the databse")
             for index, user in enumerate(user_list):
                 for key, value in user.items():
@@ -127,7 +128,7 @@ class dashboardDisplay():
                         pass
                     else:
                         print(f"{index}. {key}: {value}")
-            user_selection = input("Please select the user whose username you'd like to modify or [Q]uit the menu: ")
+            user_selection = input("Please select the user whose role you'd like to modify or [Q]uit the menu: ")
             if user_selection.upper() == "Q":
                 print("Exiting the menu")
                 break
@@ -142,20 +143,20 @@ class dashboardDisplay():
                 input("Press enter to continue")
                 continue
             selected_user = user_list[user_selection]
-            confirm = input(f"Do you want to update {selected_user["username"]}'s username? Y/n: ")
+            confirm = input(f"Do you want to update {selected_user["username"]}'s role? Y/n: ")
             if confirm.upper() == "N":
                 continue
             print(f"The selected user's role is {selected_user["role"]}")
-            new_role = input("What is the role you'd like to give to this user? 'user', 'admin', or 'back'")
+            new_role = input("What is the role you'd like to give to this user? 'user', 'admin': ")
             if new_role not in ["user", "admin"]:
                 print("The user's role hasn't been changed.")
                 continue
-            self.cnx.db_update({"_id": selected_user["_id"]}, {"$set": {"role": new_role}})
+            self.cnx.db_update({"_id": selected_user["_id"]}, {"$set": {"role": new_role}}, "users")
             print(f"The new role has been changed to {new_role}!")
     
     def admin_delete_user(self):
-        user_list = self.cnx.db_search_many({}, "users")
         while True:
+            user_list = self.cnx.db_search_many({}, "users")
             print("Here's a list of users in the databse")
             for index, user in enumerate(user_list):
                 for key, value in user.items():
@@ -182,13 +183,13 @@ class dashboardDisplay():
             if confirm.upper() == "N":
                 continue
             self.cnx.db_delete_many({"user_id": selected_user["_id"]}, "orders")
-            self.cnx.db_delete_one({"_id": selected_user["_id"]})
+            self.cnx.db_delete_one({"_id": selected_user["_id"]}, "users")
             print("Deleted user and all orders associated with said user.") 
             
 
     def run(self):
         while True:
-            print(f"No Noisy Parts! Not Here!")
+            print(f"Welcome to the account management dashboard!")
             print(f"Hello {gi.current_user["username"]}! You have {gi.current_user["role"]} privileges")
             print("What would you like to do today?")
             if gi.current_user["role"] == "admin":

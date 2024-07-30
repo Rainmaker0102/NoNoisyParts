@@ -10,7 +10,7 @@ import global_info as gi
 
 class dashboardDisplay():
     def __init__(self):
-        self.cnx = db_connection()
+        self.cnx = db_connection("order_dash")
     
     def view_orders(self):
         search_user_id = gi.current_user["_id"]
@@ -47,7 +47,11 @@ class dashboardDisplay():
             print("Here's your order so far")
             for items in order:
                 for key, value in items.items():
-                    print(f"{key}: {value}")
+                    if key == "item_id":
+                        inventory_item_name = self.cnx.db_search_one({"_id": ObjectId(f"{value}")}, "inventory")
+                        print(f"{"Item"}: {inventory_item_name["name"]}")
+                    else:
+                        print(f"{key}: {value}")
             selection = input("Select the number you'd like to add/modify to your order, [R]eset your order, [P]ush your order, or [Q]uit: ")
             if selection.upper() == "Q":
                 print("Quitting the creator")
@@ -274,7 +278,7 @@ class dashboardDisplay():
 
     def run(self):
         while True:
-            print(f"No Noisy Parts! Not Here!")
+            print(f"Welcome to the order management dashboard")
             print(f"Hello {gi.current_user["username"]}! You have {gi.current_user["role"]} privileges")
             print("What would you like to do today?")
             if gi.current_user["role"] == "admin":
