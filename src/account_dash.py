@@ -183,7 +183,7 @@ class dashboardDisplay():
                 continue
             self.cnx.db_delete_many({"user_id": selected_user["_id"]}, "orders")
             self.cnx.db_delete_one({"_id": selected_user["_id"]})
-            print("Deleted user and all orders associated with said user.")
+            print("Deleted user and all orders associated with said user.") 
             
 
     def run(self):

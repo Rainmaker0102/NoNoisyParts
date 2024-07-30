@@ -2,13 +2,11 @@
 # This is where a new user would create an account
 
 # Python Module Imports
-from bson import ObjectId
 from hashlib import sha256
 from getpass import getpass
 
 # Project imports
 from db_cnx import db_connection
-import global_info as gi
 
 class dashboardDisplay():
     def __init__(self):
@@ -74,6 +72,7 @@ class dashboardDisplay():
                                 break
                             continue
                         self.cnx.db_insert(self.new_user, "users")
+                        break
         print()
 
 

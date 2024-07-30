@@ -8,20 +8,24 @@ from hashlib import sha256
 # Project Imports
 from db_cnx import db_connection
 import global_info as gi
-import order_dash as od
+import nnp_dash as nnp
+import account_creator as ac
 
 class Login():
-    def __init__(self, active=True):
-        self.active = active
+    def __init__(self):
         self.connection = db_connection()
 
     def run(self):
-        while self.active:
-            print("Please sign in. [Q]uit")
+        while True:
+            print("Please sign in, [M]ake an account, or [Q]uit")
             username = input("Username: ")
             if username.upper() == "Q":
                 print("Bye")
                 break
+            elif username.upper() == "M":
+                my_account_creator = ac.dashboardDisplay()
+                my_account_creator.run()
+                continue
             password = sha256(getpass("Password: ").encode())
             user_search_result = self.connection.db_search_one({"username": username}, "users") or {"username": "None", "password_hash": "None"}
             if user_search_result["username"] != username:
@@ -33,8 +37,8 @@ class Login():
                 print(f"Welcome, {username}")
                 print("#########################################")
                 print()
-                order_dash = od.dashboardDisplay()
-                order_dash.run()
+                my_dash = nnp.dashboardDisplay()
+                my_dash.run()
 
 
 if __name__ == "__main__":
